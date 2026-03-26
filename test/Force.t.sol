@@ -12,7 +12,9 @@ contract ForceTest is Test {
     }
 
     function test_Force() public {
-        /** EXPLOIT START **/
+        /**
+         *
+         */
         console.log("Balance before exploit:", address(force).balance);
         vm.deal(address(this), 1 ether);
         Exploit exploit = new Exploit{value: 1 ether}(payable(address(force)));

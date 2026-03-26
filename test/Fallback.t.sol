@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Test,console} from "forge-std/Test.sol";
+import {Test, console} from "forge-std/Test.sol";
 import {Fallback} from "../src/Fallback/Fallback.sol";
 
 contract FallbackTest is Test {
-
     Fallback fallbackContract;
     address public constant ATTACKER = address(0xB0B);
     address owner = msg.sender;
@@ -17,14 +16,13 @@ contract FallbackTest is Test {
 
     function test_1() public {
         //set
-        for (uint i = 0; i < 100; i++) {
+        for (uint256 i = 0; i < 100; i++) {
             address addr = address(uint160(i + 1));
             vm.deal(addr, 1 ether);
             vm.prank(addr);
             fallbackContract.contribute{value: 0.0009 ether}();
         }
         console.log("Balance Before Attack", address(fallbackContract).balance);
-        
 
         //attack
         vm.startPrank(ATTACKER);
@@ -36,7 +34,5 @@ contract FallbackTest is Test {
         assertEq(address(fallbackContract).balance, 0);
         assert(ATTACKER == fallbackContract.owner());
         console.log("Balance After Attack", address(ATTACKER).balance);
-        
-    }        
-
+    }
 }

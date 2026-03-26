@@ -1,10 +1,12 @@
 pragma solidity ^0.8.0;
 
-import {Test,console} from "forge-std/Test.sol";
+import {Test, console} from "forge-std/Test.sol";
 import {Telephone} from "../src/Telephone/Telephone.sol";
+
 contract TelephoneTest is Test {
     Telephone telephone;
     Exploit exploit;
+
     function setUp() public {
         telephone = new Telephone();
         exploit = new Exploit(address(telephone));
@@ -18,10 +20,8 @@ contract TelephoneTest is Test {
 
         assertEq(telephone.owner(), attacker);
         console.log("Attack Successful, new owner is:", telephone.owner());
-        
     }
 }
-
 
 contract Exploit {
     Telephone telephone;
