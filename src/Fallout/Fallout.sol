@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 contract Fallout {
-
     mapping(address => uint256) allocations;
     address payable public owner;
 
